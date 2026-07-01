@@ -1,9 +1,10 @@
 ---
-import { storyblokEditable, renderRichText } from '@storyblok/astro';
+import { storyblokEditable } from '@storyblok/astro';
+import { renderRichText } from '../../utils/richtext';
 
 const { blok } = Astro.props;
 
-const renderedContent = blok.content ? renderRichText(blok.content) : '';
+const renderedContent = renderRichText(blok.content);
 
 const bgMap: Record<string, string> = {
   white: 'var(--color-surface)',
