@@ -1,0 +1,19 @@
+# build output
+dist/
+.output/
+
+# dependencies
+node_modules/
+
+# environment variables
+.env
+.env.local
+
+# astro
+.astro/
+
+# MCP config (contains API tokens)
+.mcp.json
+
+# logs
+*.log

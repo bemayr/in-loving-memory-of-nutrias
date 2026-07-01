@@ -1,0 +1,87 @@
+---
+import { storyblokEditable, renderRichText } from '@storyblok/astro';
+
+const { blok } = Astro.props;
+
+const renderedContent = blok.content ? renderRichText(blok.content) : '';
+
+const bgMap: Record<string, string> = {
+  white: 'var(--color-surface)',
+  light: 'var(--color-bg)',
+  dark: 'var(--color-forest)',
+};
+const bg = bgMap[blok.background] ?? 'var(--color-bg)';
+const isDark = blok.background === 'dark';
+const uid = blok._uid as string;
+
+// Inline style tag: morphdom only freezes element *attributes*, not text-node
+// content, so putting the dynamic background here makes it update live.
+const dynamicCSS = [
+  `#ts-${uid}{background:${bg}}`,
+  isDark ? `#ts-${uid} .text-section__title{color:var(--color-earth-light)}` : '',
+  isDark ? `#ts-${uid} .text-section__body,#ts-${uid} .richtext p,#ts-${uid} .richtext li{color:rgba(255,255,255,0.88)}` : '',
+  isDark ? `#ts-${uid} .richtext h3{color:var(--color-earth-light)}` : '',
+].join('');
+---
+
+<section {...storyblokEditable(blok)}>
+  <Fragment set:html={`<style>${dynamicCSS}</style>`} />
+  <div id={`ts-${uid}`} class="text-section">
+    <div class="text-section__inner">
+      {blok.title && <h2 class="text-section__title">{blok.title}</h2>}
+      {renderedContent && (
+        <div class="text-section__body richtext" set:html={renderedContent} />
+      )}
+    </div>
+  </div>
+</section>
+
+<style>
+  .text-section {
+    padding: 5rem 1.5rem;
+  }
+
+  .text-section__inner {
+    max-width: 760px;
+    margin-inline: auto;
+  }
+
+  .text-section__title {
+    font-size: clamp(1.6rem, 4vw, 2.4rem);
+    font-weight: 700;
+    color: var(--color-forest);
+    margin-bottom: 1.5rem;
+    line-height: 1.2;
+  }
+
+  /* richtext defaults */
+  :global(.richtext p) {
+    margin-bottom: 1rem;
+    font-size: 1.05rem;
+    line-height: 1.75;
+    color: var(--color-text-muted);
+  }
+
+  :global(.richtext strong) {
+    color: var(--color-text);
+    font-weight: 600;
+  }
+
+  :global(.richtext ul),
+  :global(.richtext ol) {
+    padding-left: 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  :global(.richtext li) {
+    margin-bottom: 0.4rem;
+    color: var(--color-text-muted);
+  }
+
+  :global(.richtext h3) {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--color-forest);
+    margin: 1.75rem 0 0.6rem;
+  }
+</style>

@@ -1,0 +1,45 @@
+---
+import { storyblokEditable } from '@storyblok/astro';
+
+const { blok } = Astro.props;
+---
+
+<article class="feature-item" {...storyblokEditable(blok)}>
+  {blok.icon && <div class="feature-item__icon" aria-hidden="true">{blok.icon}</div>}
+  {blok.title && <h3 class="feature-item__title">{blok.title}</h3>}
+  {blok.description && <p class="feature-item__description">{blok.description}</p>}
+</article>
+
+<style>
+  .feature-item {
+    background: var(--color-bg);
+    border-radius: var(--radius);
+    padding: 2rem 1.5rem;
+    box-shadow: var(--shadow);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  .feature-item:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 32px rgba(44, 26, 14, 0.12);
+  }
+
+  .feature-item__icon {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    line-height: 1;
+  }
+
+  .feature-item__title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--color-forest);
+    margin-bottom: 0.5rem;
+  }
+
+  .feature-item__description {
+    font-size: 0.95rem;
+    color: var(--color-text-muted);
+    line-height: 1.65;
+  }
+</style>

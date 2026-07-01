@@ -1,0 +1,35 @@
+---
+export const prerender = false;
+
+import { useStoryblokApi, getPayload, isEditorRequest } from '@storyblok/astro';
+import StoryblokComponent from '@storyblok/astro/StoryblokComponent.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const storyblokApi = useStoryblokApi();
+
+const slug = Astro.params.slug || 'home';
+const inEditor = isEditorRequest(new URL(Astro.request.url));
+
+let story;
+
+// In live-preview mode the middleware injects the updated story via POST;
+// fall back to the API for normal page loads.
+const { story: liveStory } = await getPayload({ locals: Astro.locals });
+
+if (liveStory) {
+  story = liveStory;
+} else {
+  try {
+    const { data } = await storyblokApi.get(`cdn/stories/${slug}`, {
+      version: inEditor || import.meta.env.DEV ? 'draft' : 'published',
+    });
+    story = data.story;
+  } catch (e) {
+    return Astro.redirect('/404');
+  }
+}
+---
+
+<BaseLayout>
+  <StoryblokComponent blok={story.content} />
+</BaseLayout>
