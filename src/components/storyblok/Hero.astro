@@ -1,12 +1,13 @@
 ---
 import { storyblokEditable } from '@storyblok/astro';
+import { resolveStoryblokLink } from '../../utils/link';
 
 const { blok } = Astro.props;
 
 const imageUrl = blok.image?.filename
   ? `${blok.image.filename}/m/1600x900/smart`
   : null;
-const ctaHref = blok.cta_link?.url || blok.cta_link?.cached_url || '#';
+const ctaHref = resolveStoryblokLink(blok.cta_link);
 ---
 
 <section class="hero" {...storyblokEditable(blok)}>
